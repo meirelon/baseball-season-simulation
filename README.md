@@ -10,7 +10,7 @@ cd baseball-season-simulation
 pip install -r requirements.txt
 python simulate_season.py --season=2019 --ntrials=100
 ```
-Feel free to play with different season and/or number of trials.
+Feel free to play with different seasons and/or number of trials.
 
 ## Contributing
 
