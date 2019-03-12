@@ -5,7 +5,7 @@ Quick and easy MLB team standings simulations. All you have to do is clone this 
 ## Getting Started
 
 ```
-git clone
+git clone https://github.com/meirelon/baseball-season-simulation.git
 cd baseball-season-simulation
 pip install -r requirements.txt
 python simulate_season.py --season=2019 --ntrials=100
