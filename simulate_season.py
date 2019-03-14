@@ -36,7 +36,11 @@ class simulateSeason:
             schedule_rg['win'] = schedule_rg.apply(lambda row: str(np.where(row['outcome']>0, row['home_team'], row['visiting_team'])), axis=1)
             return schedule_rg.groupby("win")["outcome"].count().reset_index().set_index("win").transpose()
         elif distribution.lower() == 'normal':
-            schedule_rg['outcome'] = schedule_rg.apply(lambda row: random.normalvariate(row['home_mean'],row['home_std']) - random.normalvariate(row['visiting_mean'],row['visiting_std']), axis=1)
+            schedule_rg['outcome'] = schedule_rg.apply(lambda row: random.gauss(row['home_mean'],row['home_std']) - random.gauss(row['visiting_mean'],row['visiting_std']), axis=1)
+            schedule_rg['win'] = schedule_rg.apply(lambda row: str(np.where(row['outcome']>0, row['home_team'], row['visiting_team'])), axis=1)
+            return schedule_rg.groupby("win")["outcome"].count().reset_index().set_index("win").transpose()
+        elif distribution.lower() == 'lognormal':
+            schedule_rg['outcome'] = schedule_rg.apply(lambda row: random.lognormvariate(row['home_mean'],row['home_std']) - random.lognormvariate(row['visiting_mean'],row['visiting_std']), axis=1)
             schedule_rg['win'] = schedule_rg.apply(lambda row: str(np.where(row['outcome']>0, row['home_team'], row['visiting_team'])), axis=1)
             return schedule_rg.groupby("win")["outcome"].count().reset_index().set_index("win").transpose()
         elif distribution.lower() == 'gamma':

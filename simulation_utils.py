@@ -9,4 +9,4 @@ SCHEDULE_COLUMNS = ["date",
                 "home_game_number",
                 "game_time"]
 
-DISTRIBUTIONS = ["beta", "normal", "gamma", "weibull"]
+DISTRIBUTIONS = ["beta", "normal", "lognormal", "gamma", "weibull"]
