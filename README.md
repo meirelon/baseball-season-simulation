@@ -5,6 +5,8 @@ Quick and easy MLB team standings simulations. All you have to do is clone this 
 ## 2020 Predictions
 ![alt text](https://raw.githubusercontent.com/meirelon/baseball-season-simulation/master/imgs/predictions_2020.png)
 
+![alt text](https://raw.githubusercontent.com/meirelon/baseball-season-simulation/master/imgs/predictions_2020_scatter.png)
+
 ## 2019 Results
 
 ![alt text](https://raw.githubusercontent.com/meirelon/baseball-season-simulation/master/imgs/results_2019.png)
