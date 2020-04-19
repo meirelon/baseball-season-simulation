@@ -11,6 +11,8 @@ Quick and easy MLB team standings simulations. All you have to do is clone this 
 
 ![alt text](https://raw.githubusercontent.com/meirelon/baseball-season-simulation/master/imgs/results_2019.png)
 
+![alt text](https://raw.githubusercontent.com/meirelon/baseball-season-simulation/master/imgs/results_2019_errors.png)
+
 ## Getting Started
 
 ```
