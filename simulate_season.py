@@ -89,8 +89,8 @@ def main(argv=None):
 
     args, _ = parser.parse_known_args(argv)
 
-    simulation = simulateSeason(args.season)
-    simulation.simulate(ntrials=args.ntrials)
+    simulation = simulateSeason(int(args.season))
+    simulation.simulate(ntrials=int(args.ntrials))
 
 
 if __name__ == '__main__':
