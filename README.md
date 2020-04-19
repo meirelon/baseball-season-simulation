@@ -2,7 +2,10 @@
 
 Quick and easy MLB team standings simulations. All you have to do is clone this repo, input a year you wish to simulate, and the results will be placed in a local directory.
 
-## UPDATE 2019 Results
+## 2020 Predictions
+![alt text](https://raw.githubusercontent.com/meirelon/baseball-season-simulation/master/imgs/predictions_2020.png)
+
+## 2019 Results
 
 ![alt text](https://raw.githubusercontent.com/meirelon/baseball-season-simulation/master/imgs/results_2019.png)
 
