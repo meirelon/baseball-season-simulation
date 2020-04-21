@@ -56,25 +56,26 @@ class simulateSeason:
             print("Pick one of the following distributions {}".format(" | ".join(sorted(["beta", "normal", "gamma", "weibull"]))))
 
     def simulate(self, ntrials=100):
-        sim_time = datetime.now().strftime("%Y%m%d%H%M%S")
-        os.mkdir("data/simulations/{}".format(sim_time))
+        # sim_time = datetime.now().strftime("%Y%m%d%H%M%S")
+        # os.mkdir("data/simulations/{}".format(sim_time))
         home_rg, away_rg = self.runs_per_game()
         schedule = self.get_season_schedule()
         schedule_rg = schedule.set_index("visiting_team").join(away_rg.set_index("visiting_team")).reset_index().set_index("home_team").join(home_rg.set_index("home_team")).reset_index().sort_values(by="date")
 
         simulation_list = []
         for dist in DISTRIBUTIONS:
-            print(dist)
+            # print(dist)
             sim_season_df = pd.concat([self.sim_season(schedule_rg = schedule_rg, distribution=dist)
                                        for x in range(0,ntrials)], axis=0).mean(axis=0).round().astype(int).reset_index()
             sim_season_df.columns = ["team", f"{dist}_wins"]
             simulation_list.append(sim_season_df)
 
         merged = reduce(lambda x, y: pd.merge(x, y, on = 'team'), simulation_list)
+        merged["year"] = str(self.season+1)
 
-        merged.to_csv("data/simulations/{time}/sim_{season}.csv".format(season=self.season+1,
-                                                                                       time=sim_time),
-                                                                                       index=False)
+        # merged.to_csv("data/simulations/{time}/sim_{season}.csv".format(season=self.season+1,
+        #                                                                                time=sim_time),
+        #                                                                                index=False)
         return merged
 
 
