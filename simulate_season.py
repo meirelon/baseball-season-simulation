@@ -31,7 +31,7 @@ class simulateSeason:
         season_to_simulate = str(self.season + 1)
         if self.gcp:
             from gcp_utils import load_gcs_schedule
-            schedule = load_gcs_schedule(season_to_simulate)
+            schedule = load_gcs_schedule(season=season_to_simulate)
 
         else:
             schedule = pd.read_csv("data/schedule/{}SKED.txt".format(season_to_simulate), header=None).iloc[:,0:10]
@@ -68,8 +68,8 @@ class simulateSeason:
     def simulate(self, ntrials=100):
         sim_time = datetime.now().strftime("%Y%m%d%H%M%S")
         # os.mkdir("data/simulations/{}".format(sim_time))
-        home_rg, away_rg = self.runs_per_game()
         schedule = self.get_season_schedule()
+        home_rg, away_rg = self.runs_per_game()
 
         schedule_rg = schedule\
         .set_index("visiting_team")\
@@ -98,9 +98,10 @@ class simulateSeason:
         if self.gcp:
             from gcp_utils import export_to_gcs
             export_to_gcs(merged, self.date_filter)
+        else:
+            merged.to_html("data/simulations/dev/sim_{season}.html".format(season=self.season+1), index=False)
 
-        # merged.to_html("data/simulations/dev/sim_{season}.html".format(season=self.season+1), index=False)
-        return merged
+        return "True"
 
 
 def main(argv=None):
