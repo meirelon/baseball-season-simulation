@@ -1,3 +1,5 @@
+setuptools
+gcsfs
 pybaseball
 pandas
 numpy
