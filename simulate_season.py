@@ -10,7 +10,7 @@ import numpy as np
 from pybaseball import batting_stats
 from pybaseball import season_game_logs
 
-from simulation_utils import SCHEDULE_COLUMNS, DISTRIBUTIONS
+from simulation_utils import SCHEDULE_COLUMNS, DISTRIBUTIONS, MLB_DIVISONS
 
 class simulateSeason:
     def __init__(self, season, date_filter=None, gcp=False):
@@ -21,9 +21,17 @@ class simulateSeason:
     def runs_per_game(self):
         season_string = str(self.season)
         gamelogs = season_game_logs(self.season)
-        home_rg = gamelogs[gamelogs["date"] > int(season_string + '0717')].groupby("home_team")["home_score"].agg(['mean', 'std']).reset_index()
+
+        home_rg = gamelogs[gamelogs["date"] > int(season_string + '0717')]\
+        .groupby("home_team")["home_score"]\
+        .agg(['mean', 'std'])\
+        .reset_index()
         home_rg.columns = ["home_team", "home_mean", "home_std"]
-        away_rg = gamelogs[gamelogs["date"] > int(season_string + '0717')].groupby("visiting_team")["visiting_score"].agg(['mean', 'std']).reset_index()
+
+        away_rg = gamelogs[gamelogs["date"] > int(season_string + '0717')]\
+        .groupby("visiting_team")["visiting_score"]\
+        .agg(['mean', 'std'])\
+        .reset_index()
         away_rg.columns = ["visiting_team", "visiting_mean", "visiting_std"]
         return [home_rg, away_rg]
 
@@ -39,7 +47,18 @@ class simulateSeason:
         schedule.columns = SCHEDULE_COLUMNS
         if self.date_filter is not None:
             schedule = schedule[schedule["date"] <= int(self.date_filter)]
-        return schedule
+
+
+        visiting_games = schedule.groupby("visiting_team")["number_of_games"].count().reset_index()
+        visiting_games.columns = ["team", "visiting_number_of_games"]
+        home_games = schedule.groupby("home_team")["number_of_games"].count().reset_index()
+        home_games.columns = ["team", "home_number_of_games"]
+        total_games_by_team = visiting_games.set_index('team').join(home_games.set_index('team')).reset_index()
+        total_games_by_team["total_games_played"] = total_games_by_team["home_number_of_games"] + total_games_by_team["visiting_number_of_games"]
+
+        divisions_list = [total_games_by_team.query(f"team in {MLB_DIVISONS[k]}") for k in MLB_DIVISONS.keys()]
+
+        return schedule, total_games_by_team
 
     def sim_season(self, schedule_rg, distribution='beta'):
         if distribution.lower() == 'beta':
@@ -68,7 +87,7 @@ class simulateSeason:
     def simulate(self, ntrials=100):
         sim_time = datetime.now().strftime("%Y%m%d%H%M%S")
         # os.mkdir("data/simulations/{}".format(sim_time))
-        schedule = self.get_season_schedule()
+        schedule, total_games_by_team = self.get_season_schedule()
         home_rg, away_rg = self.runs_per_game()
 
         schedule_rg = schedule\
@@ -91,15 +110,18 @@ class simulateSeason:
         merged = reduce(lambda x, y: pd.merge(x, y, on = 'team'), simulation_list)
         merged["year"] = str(self.season+1)
 
+        summary_df = merged.set_index("team").join(total_games_by_team.set_index("team")).reset_index()
+
         # merged.to_csv("data/simulations/{time}/sim_{season}.csv".format(season=self.season+1,
         #                                                                                time=sim_time),
         #
 
         if self.gcp:
             from gcp_utils import export_to_gcs
-            export_to_gcs(merged, self.date_filter)
+            export_to_gcs(summary_df, self.date_filter)
         else:
-            merged.to_html("data/simulations/dev/sim_{season}.html".format(season=self.season+1), index=False)
+            summary_df.to_html("data/simulations/dev/sim_{season}.html".format(season=self.season+1), index=False)
+            summary_df.to_csv("data/simulations/dev/sim_{season}.csv".format(season=self.season+1), index=False)
 
         return "True"
 
