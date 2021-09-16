@@ -13,10 +13,11 @@ from pybaseball import season_game_logs
 from simulation_utils import SCHEDULE_COLUMNS, DISTRIBUTIONS, MLB_DIVISONS
 
 class simulateSeason:
-    def __init__(self, season, date_filter=None, gcp=False):
+    def __init__(self, season, date_filter=None, gcp=False, pybaseball_schedule=False):
         self.season = int(season)-1
         self.date_filter = date_filter
         self.gcp = gcp
+        self.pybaseball_schedule = pybaseball_schedule
 
     def runs_per_game(self):
         season_string = str(self.season)
@@ -40,7 +41,10 @@ class simulateSeason:
         if self.gcp:
             from gcp_utils import load_gcs_schedule
             schedule = load_gcs_schedule(season=season_to_simulate)
-
+        if self.pybaseball_schedule:
+            #NOTE: requires you to setup GH_TOKEN in env: https://github.com/jldbc/pybaseball/commit/1d643649b1310bdb1664fe47863cb90c6b1ad4a7#diff-0afa2103d97955913e8bd0001b682b37bc80d6fa8230b12ed827644eb8261858R28
+            from pybaseball import schedules
+            schedule = schedules(season_to_simulate).iloc[:,0:10]
         else:
             schedule = pd.read_csv("data/schedule/{}SKED.txt".format(season_to_simulate), header=None).iloc[:,0:10]
 
@@ -145,12 +149,17 @@ def main(argv=None):
                         dest='gcp',
                         default=False,
                         help='Read and Write Data with Google Cloud Platform')
+    parser.add_argument('--pybaseball_schedule',
+                        dest='pybaseball_schedule',
+                        default=True,
+                        help='Read Schedule Data from Pybaseball (retrosheet)')
 
     args, _ = parser.parse_known_args(argv)
 
     simulation = simulateSeason(season=int(args.season),
                                 date_filter=args.date_filter,
-                                gcp=bool(args.gcp))
+                                gcp=bool(args.gcp),
+                                pybaseball_schedule=bool(args.pybaseball_schedule))
 
     simulation.simulate(ntrials=int(args.ntrials))
 
