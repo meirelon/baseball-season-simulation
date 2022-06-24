@@ -1,16 +1,14 @@
-import os
 import argparse
 import random
-from datetime import datetime
 from functools import reduce
 
 import pandas as pd
 import numpy as np
 
-from pybaseball import batting_stats
+
 from pybaseball import season_game_logs
 
-from simulation_utils import SCHEDULE_COLUMNS, DISTRIBUTIONS, MLB_DIVISONS
+from simulation_utils import SCHEDULE_COLUMNS, DISTRIBUTIONS
 
 
 class simulateSeason:
@@ -79,10 +77,10 @@ class simulateSeason:
             + total_games_by_team["visiting_number_of_games"]
         )
 
-        divisions_list = [
-            total_games_by_team.query(f"team in {MLB_DIVISONS[k]}")
-            for k in MLB_DIVISONS.keys()
-        ]
+        # divisions_list = [
+        #     total_games_by_team.query(f"team in {MLB_DIVISONS[k]}")
+        #     for k in MLB_DIVISONS.keys()
+        # ]
 
         return schedule, total_games_by_team
 
@@ -190,7 +188,7 @@ class simulateSeason:
             )
 
     def simulate(self, ntrials=100):
-        sim_time = datetime.now().strftime("%Y%m%d%H%M%S")
+        # sim_time = datetime.now().strftime("%Y%m%d%H%M%S")
         # os.mkdir("data/simulations/{}".format(sim_time))
         schedule, total_games_by_team = self.get_season_schedule()
         home_rg, away_rg = self.runs_per_game()

@@ -117,3 +117,4 @@ dmypy.json
 *.ipynb
 *.csv
 *.gsheet
+GH_TOKEN
