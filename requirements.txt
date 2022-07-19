@@ -1,6 +1,6 @@
 setuptools
 gcsfs
 google-cloud-storage
-pybaseball
+pybaseball>=2.2.1
 pandas
 numpy
